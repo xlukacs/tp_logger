@@ -1,18 +1,47 @@
 import psycopg2
 from datetime import datetime
-
+import threading
+from enum import Enum
 
 class Logger:
-    def generate_log(self, event, value, cron):
-        now = datetime.now()
-        formatted_now = now.strftime('%Y-%m-%d %H-%M-%S')
-        return event + ':' + value + ":" + cron + ":" + formatted_now
+    class LogType(Enum):
+        STARTED = 1
+        STOPPED = 2
+        DOWNLOADED = 3
+        ERROR = 4
+
+    _instance = None
+    _lock = threading.Lock()
+
+    def __new__(cls):
+        with cls._lock:
+            if cls._instance is None:
+                cls._instance = super().__new__(cls)
+        return cls._instance
+
+    # generate logs in format: event/cron_name/timestamp/?notes?
+    def generate_log(self, log_type, cron, notes=''):
+        current_datetime = datetime.now()
+        formatted_datetime = current_datetime.strftime("%d/%m/%Y:%H/%M/%S")
+
+        if log_type == self.LogType.STARTED:
+            return "STARTED:" + str(cron) + ":" + formatted_datetime + ":" + notes
+
+        if log_type == self.LogType.STOPPED:
+            return "STOPPED:" + str(cron) + ":" + formatted_datetime + ":" + notes
+
+        if log_type == self.LogType.DOWNLOADED:
+            return "DOWNLOADED:" + str(cron) + ":" + formatted_datetime + ":" + notes
+
+        if log_type == self.LogType.ERROR:
+            return "ERROR:" + str(cron) + ":" + formatted_datetime + ":" + notes
 
     def insert_to_db(self, event, log_value, cron):
         try:
+            print("Connecting to database...")
             connection = psycopg2.connect   (
                                                 user="postgres",
-                                                password="toor",
+                                                password="root",
                                                 host="127.0.0.1",
                                                 port="5432",
                                                 database="catbase_logger"
@@ -39,7 +68,7 @@ class Logger:
     
     def saveLog(self, log):
         with open('logs.txt', 'a') as File:
-            File.write(log)
+            File.write(log+'\n')
 
 
     def logDB(self, event, log_value, cron):

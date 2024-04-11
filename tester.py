@@ -4,14 +4,14 @@ import random
 #CREATE singleton instance
 logger = Logger()
 
-events = ['START', 'STOP', 'ERROR', 'SUCCESS']
+events = [Logger.LogType.STARTED, Logger.LogType.STOPPED, Logger.LogType.ERROR, Logger.LogType.DOWNLOADED]
 crons = ['FDKAT', 'FELISPOLONIA', 'CATPEDIGREES', 'SIAMESSEE']
 
 
-for iteration in range(10000):
+for iteration in range(100):
     event = events[random.randrange(len(events))]
     cron = crons[random.randrange(len(crons))]
     
-    print(str(iteration), "-LOGGING: ", event, "/", str(iteration) + str("th event value"), "/", cron)
+    print(str(iteration), "-LOGGING: ", str(event), "/", str(iteration) + str("th event value"), "/", cron)
     logger.logDB(event, str(iteration) + str("th event value"), cron)
 
