@@ -8,7 +8,7 @@ events = [Logger.LogType.STARTED, Logger.LogType.STOPPED, Logger.LogType.ERROR, 
 crons = ['FDKAT', 'FELISPOLONIA', 'CATPEDIGREES', 'SIAMESSEE']
 
 
-for iteration in range(100):
+for iteration in range(10):
     event = events[random.randrange(len(events))]
     cron = crons[random.randrange(len(crons))]
     

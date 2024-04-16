@@ -41,10 +41,10 @@ class Logger:
             print("Connecting to database...")
             connection = psycopg2.connect   (
                                                 user="postgres",
-                                                password="root",
+                                                password="toor",
                                                 host="127.0.0.1",
                                                 port="5432",
-                                                database="catbase_logger"
+                                                database="catbase"
                                             )
 
             cursor = connection.cursor()
@@ -58,13 +58,12 @@ class Logger:
                 print("Log inserted successfully...")
             else:
                 print("Logging failed...")
+
+            cursor.close()
+            connection.close()
         except(Exception, psycopg2.Error) as Error:
             print("An error occured: ", Error)
 
-        finally:
-            if connection:
-                cursor.close()
-                connection.close()
     
     def saveLog(self, log):
         with open('logs.txt', 'a') as File:
@@ -75,3 +74,5 @@ class Logger:
         log = self.generate_log(event, log_value, cron)
         self.saveLog(log)
         self.insert_to_db(event, log_value, cron)
+
+
