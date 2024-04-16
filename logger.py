@@ -48,8 +48,19 @@ class Logger:
                                             )
 
             cursor = connection.cursor()
-            querry = "INSERT INTO logs(event, value, cron) VALUES (%s, %s, %s)"    
-            data = (str(event), str(log_value), str(cron))
+            querry = "INSERT INTO logs(event, value, cron) VALUES (%s, %s, %s)"
+
+            event_name = ""
+            if event == self.LogType.STARTED:
+                event_name = "STARTED"
+            if event == self.LogType.STOPPED:
+                event_name = "STOPPED"
+            if event == self.LogType.DOWNLOADED:
+                event_name = "DOWNLOADED"
+            if event == self.LogType.ERROR:
+                event_name = "ERROR"
+
+            data = (str(event_name), str(log_value), str(cron))
 
             cursor.execute(querry, data)
             connection.commit()
